@@ -11,6 +11,7 @@ public class PlayerMovementModel : MonoBehaviour
    [SerializeField]private KeyCode _right;
    [SerializeField] private float _speed;
    [SerializeField] private float _maxSpeed;
+   [SerializeField] private Rigidbody _rb;
 
    public KeyCode Up => _up;
 
@@ -23,5 +24,5 @@ public class PlayerMovementModel : MonoBehaviour
    public float Speed => _speed;
    public float MaxSpeed => _maxSpeed;
 
-   
+   public Rigidbody Rb => _rb;
 }

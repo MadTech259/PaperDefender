@@ -1,10 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 
-public class PlayerMovementController : MonoBehaviour
+public class PlayerMovementController : GameComponent
 {
     [SerializeField] private PlayerMovementModel model;
+    private IPlayerAimHelper PlayerAimHelper { get; set; }
+    private Vector3 _aimDirection;
+
+    public override void EarlyInitialization(IServicesInjector gamePlayServices)
+    {
+        PlayerAimHelper = gamePlayServices.Get<IPlayerAimHelper>();
+    }
 
     private void Update()
     {
@@ -31,13 +39,22 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         direction *= model.Speed;
-        
-        //gameObject.transform.Translate(new Vector3(direction.x, 0,direction.y));
-        var rb = gameObject.GetComponent<Rigidbody>();
-        rb.AddForce(new Vector3(direction.x, 0,direction.y));
-        if (rb.velocity.magnitude > model.MaxSpeed)
+
+        if (PlayerAimHelper.ShootingDirection(out var dir))
         {
-            rb.velocity = rb.velocity.normalized * model.MaxSpeed;
+            Debug.DrawRay(transform.position, dir);
+            _aimDirection = dir;
         }
+
+        model.Rb.AddForce(new Vector3(direction.x, 0,direction.y));
+        if (model.Rb.velocity.magnitude > model.MaxSpeed)
+        {
+            model.Rb.velocity = model.Rb.velocity.normalized * model.MaxSpeed;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        transform.forward = Vector3.Slerp(transform.forward, _aimDirection, 20 * Time.fixedDeltaTime);
     }
 }

@@ -12,7 +12,7 @@ public class PlayerAnimatorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(model.speedX +"," + model.speedY + "");
+        Debug.DrawRay(animator.transform.position + Vector3.up, new Vector3(model.speedX,0,  model.speedY) );
         animator.SetFloat("speedX", model.speedX);
         animator.SetFloat("speedY", model.speedY);
     }
